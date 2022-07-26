@@ -1,0 +1,11 @@
+README.md
+setup.py
+gym_phishing/__init__.py
+gym_phishing.egg-info/PKG-INFO
+gym_phishing.egg-info/SOURCES.txt
+gym_phishing.egg-info/dependency_links.txt
+gym_phishing.egg-info/requires.txt
+gym_phishing.egg-info/top_level.txt
+gym_phishing/envs/__init__.py
+gym_phishing/envs/rlptest.py
+gym_phishing/envs/rlptraining.py

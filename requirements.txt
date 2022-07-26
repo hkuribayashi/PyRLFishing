@@ -1,0 +1,6 @@
+gym
+numpy
+torch
+setuptools
+pandas
+scikit-learn
