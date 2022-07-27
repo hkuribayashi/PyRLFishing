@@ -47,4 +47,4 @@ class PPO:
                 contador += 1
             if done:
                 obs = self.env.reset()
-        print(contador/1000)
+        print("Acurácia: {}".format(contador/1000))

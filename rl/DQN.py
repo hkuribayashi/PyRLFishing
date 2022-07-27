@@ -3,25 +3,35 @@ import gym
 import pathlib
 from stable_baselines3 import DQN as DQN_
 
+from config.default import RLConfig
+
 
 class DQN:
     def __init__(self, id_, config=None, pretrained_model=None):
         # Define um ID para a Instância/Simulacao
         self._id = id_
 
+        if config is None:
+            self.config = RLConfig()
+        else:
+            self.config = config
+
         # Define qual a arquitetura da rede neural interna da DQN
-        # policy = dict(net_arch=config.net_arch)
+        self.policy = dict(net_arch=self.config.net_arch)
 
         # Instancia o ambiente Gym Customizado para o Problema
         self.env = gym.make('gym_phishing:RLPTraining-v0')
 
         # Define o total de timesteps
-        # self.total_timesteps = config.total_timesteps
-        self.total_timesteps = 100000
+        self.total_timesteps = self.config.total_timesteps
 
         # Instancia o Modelo
         if pretrained_model is None:
-            self.model = DQN_("MlpPolicy", self.env, learning_rate=0.0007, verbose=0)
+            self.model = DQN_("MlpPolicy",
+                              self.env,
+                              policy_kwargs=self.policy,
+                              learning_rate=self.config.learning_rate,
+                              verbose=self.config.verbose)
         # Ou carrega um modelo treinado anteriormente
         else:
             self.model = DQN_.load(pretrained_model)
@@ -44,4 +54,4 @@ class DQN:
                 contador += 1
             if done:
                 obs = self.env.reset()
-        print(contador / 1000)
+        print("Acurárica: {}".format(contador / 1000))
