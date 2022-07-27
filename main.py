@@ -1,12 +1,11 @@
 import os
-from config.default import RLConfig
 from rl.A2C import A2C
 from rl.DQN import DQN
 from rl.PPO import PPO
-
-# Usado para prevenir o BUG "Initializing libomp.dylib, but found libomp.dylib already initialized."
+from config.default import RLConfig
 from utils.datafilter import load_dataset
 
+# Usado para prevenir o BUG "Initializing libomp.dylib, but found libomp.dylib already initialized."
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
 # Define Configurações Gerais para todas as simulações
