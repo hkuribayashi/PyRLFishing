@@ -55,3 +55,4 @@ class DQN:
             if done:
                 obs = self.env.reset()
         print("Acurárica: {}".format(contador / 1000))
+        return contador/1000

@@ -4,3 +4,4 @@ torch
 setuptools
 pandas
 scikit-learn
+stable_baselines3

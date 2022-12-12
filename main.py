@@ -12,7 +12,12 @@ os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 config = RLConfig(600, 0.0007, 100000, 0, [128, 128])
 print("Definindo Configuração Padrão: {}".format(config))
 
-for _ in range(100):
+media_dqn = 0
+lista_dqn = []
+media_a2c = 0
+media_ppo = 0
+
+for _ in range(2):
     # Carrega a base de dados e realiza a separação entre Treinamento (2/3) e Teste (1/3)
     print("Carregando base de Dados.")
     load_dataset(test_size=0.33)
@@ -24,7 +29,9 @@ for _ in range(100):
     print("Iniciando Treinamento DQN")
     simulacao1.train()
     print("Iniciando Teste DQN")
-    simulacao1.test()
+    valor_dqn = simulacao1.test()
+    lista_dqn.append(valor_dqn)
+    media_dqn += valor_dqn
     print()
 
     print("Iniciando Simulação A2C")
@@ -41,3 +48,5 @@ for _ in range(100):
     simulacao3.train()
     print("Iniciando Tese PPO")
     simulacao3.test()
+
+print(media_dqn/2)
