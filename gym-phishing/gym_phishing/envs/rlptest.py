@@ -14,7 +14,7 @@ class RLPTest(gym.Env):
         self.max_errors = 10
         self.errors = 0
         self.X, self.Y = RLPTest._load_dataset()
-        self.action_space = spaces.Discrete(3)
+        self.action_space = spaces.Discrete(2)
         self.observation_space = MultiDiscrete([3, 3, 3, 3, 3, 3, 3, 3, 3])
         self.reward_range = (-1000000, 1000000)
 
@@ -36,7 +36,7 @@ class RLPTest(gym.Env):
     def step(self, action):
         reward = 0.0
 
-        # Quando a ação for '0', significa -1 (Talvez)
+        # Quando a ação for '0', significa -1 (Phishing)
         if action == 0:
             if self.Y['Result'][self.current_step] == -1:
                 reward += 2000
@@ -45,24 +45,15 @@ class RLPTest(gym.Env):
                 reward -= 500
                 self.errors = self.errors + 1
                 resultado = "FP"
-        # Quando a ação for '1', significa 0 (Não Phishing)
+        # Quando a ação for '1', significa 1 (Não Phishing - Legítimo)
         elif action == 1:
-            if self.Y['Result'][self.current_step] == 0:
+            if self.Y['Result'][self.current_step] == 1:
                 reward += 2000
                 resultado = "TN"
             else:
                 reward -= 500
                 self.errors = self.errors + 1
                 resultado = "FN"
-        # Quando a ação for '2', significa 1 (Phishing)
-        else:
-            if self.Y['Result'][self.current_step] == 1:
-                reward += 2000
-                resultado = "TP"
-            else:
-                reward -= 500
-                self.errors = self.errors + 1
-                resultado = "FP"
 
         obs = self.reset()
 

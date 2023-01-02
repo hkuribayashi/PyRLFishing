@@ -41,8 +41,8 @@ class DQN:
         full_path = os.path.join(pathlib.Path().resolve(), "models", "DQNmodel_{}.zip".format(self._id))
         self.model.save(full_path)
 
-    def getPrecision(self, TP, TN):
-        return TP/(TP+TN)
+    def getPrecision(self, TP, FP):
+        return TP/(TP+FP)
 
     def getRecall(self, TP, FN):
         return TP/(TP+FN)
@@ -75,7 +75,7 @@ class DQN:
             if done:
                 obs = self.env.reset()
 
-        precision = self.getPrecision(tp, tn)
+        precision = self.getPrecision(tp, fp)
         recall = self.getRecall(tp, fn)
         accuracy = self.getAccuracy(tp, tn, fp, fn)
 

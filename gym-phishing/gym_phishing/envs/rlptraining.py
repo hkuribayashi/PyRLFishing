@@ -14,7 +14,7 @@ class RLPTraining(gym.Env):
         self.max_errors = 10
         self.errors = 0
         self.X, self.Y = RLPTraining._load_dataset()
-        self.action_space = spaces.Discrete(3)
+        self.action_space = spaces.Discrete(2)
         self.observation_space = MultiDiscrete([3, 3, 3, 3, 3, 3, 3, 3, 3])
         self.reward_range = (-1000000, 1000000)
 
@@ -44,13 +44,6 @@ class RLPTraining(gym.Env):
                 reward -= 500
                 self.errors = self.errors + 1
         elif action == 1:
-            if self.Y['Result'][self.current_step] == 0:
-                reward += 2000
-                acertou = True
-            else:
-                reward -= 500
-                self.errors = self.errors + 1
-        else:
             if self.Y['Result'][self.current_step] == 1:
                 reward += 2000
                 acertou = True
