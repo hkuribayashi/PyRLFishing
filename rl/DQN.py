@@ -41,18 +41,43 @@ class DQN:
         full_path = os.path.join(pathlib.Path().resolve(), "models", "DQNmodel_{}.zip".format(self._id))
         self.model.save(full_path)
 
+    def getPrecision(self, TP, TN):
+        return TP/(TP+TN)
+
+    def getRecall(self, TP, FN):
+        return TP/(TP+FN)
+
+    def getAccuracy(self, TP, TN, FP, FN):
+        return (TP+TN)/(TP+TN+FP+FN)
+
     def test(self):
         self.env = gym.make('gym_phishing:RLPTest-v0')
         obs = self.env.reset()
         self.model.set_env(self.env)
-        contador = 0
-        for _ in range(1000):
+        tp = 0
+        tn = 0
+        fp = 0
+        fn = 0
+
+        for _ in range(3000):
             action, _states = self.model.predict(obs, deterministic=True)
             obs, reward, done, info = self.env.step(action)
+            if info['resultado'] == 'TP':
+                tp += 1
+            elif info['resultado'] == 'TN':
+                tn += 1
+            elif info['resultado'] == 'FP':
+                fp += 1
+            elif info['resultado'] == 'FN':
+                fn += 1
+
             self.env.render()
-            if info['acertou']:
-                contador += 1
             if done:
                 obs = self.env.reset()
-        print("Acurárica: {}".format(contador / 1000))
-        return contador/1000
+
+        precision = self.getPrecision(tp, tn)
+        recall = self.getRecall(tp, fn)
+        accuracy = self.getAccuracy(tp, tn, fp, fn)
+
+        return precision, recall, accuracy
+

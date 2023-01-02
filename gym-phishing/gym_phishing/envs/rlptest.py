@@ -35,32 +35,38 @@ class RLPTest(gym.Env):
 
     def step(self, action):
         reward = 0.0
-        acertou = False
+
+        # Quando a ação for '0', significa -1 (Talvez)
         if action == 0:
             if self.Y['Result'][self.current_step] == -1:
                 reward += 2000
-                acertou = True
+                resultado = "TP"
             else:
                 reward -= 500
                 self.errors = self.errors + 1
+                resultado = "FP"
+        # Quando a ação for '1', significa 0 (Não Phishing)
         elif action == 1:
             if self.Y['Result'][self.current_step] == 0:
                 reward += 2000
-                acertou = True
+                resultado = "TN"
             else:
                 reward -= 500
                 self.errors = self.errors + 1
+                resultado = "FN"
+        # Quando a ação for '2', significa 1 (Phishing)
         else:
             if self.Y['Result'][self.current_step] == 1:
                 reward += 2000
-                acertou = True
+                resultado = "TP"
             else:
                 reward -= 500
                 self.errors = self.errors + 1
+                resultado = "FP"
 
         obs = self.reset()
 
-        info = {'acertou': acertou, 'total de erros': self.errors}
+        info = {'total de erros': self.errors, 'resultado': resultado}
         done = False
         if self.errors >= self.max_errors:
             done = True

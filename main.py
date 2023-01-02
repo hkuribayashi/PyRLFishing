@@ -12,12 +12,23 @@ os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 config = RLConfig(600, 0.0007, 100000, 0, [128, 128])
 print("Definindo Configuração Padrão: {}".format(config))
 
-media_dqn = 0
-lista_dqn = []
-media_a2c = 0
-media_ppo = 0
+resultados_dqn = dict()
+resultados_dqn['precision'] = 0
+resultados_dqn['recall'] = 0
+resultados_dqn['accuracy'] = 0
 
-for _ in range(2):
+resultados_ppo = dict()
+resultados_ppo['precision'] = 0
+resultados_ppo['recall'] = 0
+resultados_ppo['accuracy'] = 0
+
+resultados_a2c = dict()
+resultados_a2c['precision'] = 0
+resultados_a2c['recall'] = 0
+resultados_a2c['accuracy'] = 0
+
+realizacoes = 3
+for _ in range(realizacoes):
     # Carrega a base de dados e realiza a separação entre Treinamento (2/3) e Teste (1/3)
     print("Carregando base de Dados.")
     load_dataset(test_size=0.33)
@@ -29,12 +40,13 @@ for _ in range(2):
     print("Iniciando Treinamento DQN")
     simulacao1.train()
     print("Iniciando Teste DQN")
-    valor_dqn = simulacao1.test()
-    lista_dqn.append(valor_dqn)
-    media_dqn += valor_dqn
+    precision, recall, accuracy = simulacao1.test()
+    resultados_dqn['precision'] += precision
+    resultados_dqn['recall'] += recall
+    resultados_dqn['accuracy'] += accuracy
     print()
 
-    print("Iniciando Simulação A2C")
+    ''' print("Iniciando Simulação A2C")
     simulacao2 = A2C(2, config=config)
     print("Iniciando Treinamento A2C")
     simulacao2.train()
@@ -48,5 +60,6 @@ for _ in range(2):
     simulacao3.train()
     print("Iniciando Tese PPO")
     simulacao3.test()
+    '''
 
-print(media_dqn/2)
+print(resultados_dqn['precision']/realizacoes)
