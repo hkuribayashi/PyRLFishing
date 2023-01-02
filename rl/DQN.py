@@ -41,14 +41,21 @@ class DQN:
         full_path = os.path.join(pathlib.Path().resolve(), "models", "DQNmodel_{}.zip".format(self._id))
         self.model.save(full_path)
 
-    def getPrecision(self, TP, FP):
-        return TP/(TP+FP)
+    @staticmethod
+    def getPrecision(tp, fp):
+        return tp/(tp + fp)
 
-    def getRecall(self, TP, FN):
-        return TP/(TP+FN)
+    @staticmethod
+    def getRecall(tp, fn):
+        return tp/(tp + fn)
 
-    def getAccuracy(self, TP, TN, FP, FN):
-        return (TP+TN)/(TP+TN+FP+FN)
+    @staticmethod
+    def getAccuracy(tp, tn, fp, fn):
+        return (tp + tn)/(tp + tn + fp + fn)
+
+    @staticmethod
+    def getSpecificity(tn, fp):
+        return tn/(tn/fp)
 
     def test(self):
         self.env = gym.make('gym_phishing:RLPTest-v0')
@@ -75,9 +82,10 @@ class DQN:
             if done:
                 obs = self.env.reset()
 
-        precision = self.getPrecision(tp, fp)
-        recall = self.getRecall(tp, fn)
-        accuracy = self.getAccuracy(tp, tn, fp, fn)
+        precision = DQN.getPrecision(tp, fp)
+        recall = DQN.getRecall(tp, fn)
+        accuracy = DQN.getAccuracy(tp, tn, fp, fn)
+        specificity = DQN.getSpecificity(tn, fp)
 
-        return precision, recall, accuracy
+        return precision, recall, accuracy, specificity
 
