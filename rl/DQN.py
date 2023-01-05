@@ -4,6 +4,8 @@ import pathlib
 from stable_baselines3 import DQN as DQN_
 
 from config.default import RLConfig
+from utils.metrics import getPrecision, getRecall, getAccuracy, getFalsePositiveRate, \
+    getFalseNegativeRate
 
 
 class DQN:
@@ -41,22 +43,6 @@ class DQN:
         full_path = os.path.join(pathlib.Path().resolve(), "models", "DQNmodel_{}.zip".format(self._id))
         self.model.save(full_path)
 
-    @staticmethod
-    def getPrecision(tp, fp):
-        return tp/(tp + fp)
-
-    @staticmethod
-    def getRecall(tp, fn):
-        return tp/(tp + fn)
-
-    @staticmethod
-    def getAccuracy(tp, tn, fp, fn):
-        return (tp + tn)/(tp + tn + fp + fn)
-
-    @staticmethod
-    def getSpecificity(tn, fp):
-        return tn/(tn/fp)
-
     def test(self):
         self.env = gym.make('gym_phishing:RLPTest-v0')
         obs = self.env.reset()
@@ -66,7 +52,7 @@ class DQN:
         fp = 0
         fn = 0
 
-        for _ in range(3000):
+        for _ in range(3649):
             action, _states = self.model.predict(obs, deterministic=True)
             obs, reward, done, info = self.env.step(action)
             if info['resultado'] == 'TP':
@@ -82,10 +68,12 @@ class DQN:
             if done:
                 obs = self.env.reset()
 
-        precision = DQN.getPrecision(tp, fp)
-        recall = DQN.getRecall(tp, fn)
-        accuracy = DQN.getAccuracy(tp, tn, fp, fn)
-        specificity = DQN.getSpecificity(tn, fp)
+        precision = getPrecision(tp, fp)
+        recall = getRecall(tp, fn)
+        accuracy = getAccuracy(tp, tn, fp, fn)
+        fpr = getFalsePositiveRate(fp, tn)
+        fnr = getFalseNegativeRate(fn, tp)
+        result = {'precision': precision, 'recall': recall, 'accuracy': accuracy,
+                  'fpr': fpr, 'fnr': fnr}
 
-        return precision, recall, accuracy, specificity
-
+        return result
