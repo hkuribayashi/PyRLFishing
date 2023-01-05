@@ -2,7 +2,7 @@ import gym
 from abc import ABC
 
 from config.default import RLConfig
-from utils.metrics import getPrecision, getRecall, getAccuracy, getFalsePositiveRate, getFalseNegativeRate
+from utils.metrics import getPrecision, getRecall, getAccuracy, getFalsePositiveRate, getFalseNegativeRate, getF1Score
 
 
 class BaseModel(ABC):
@@ -57,7 +57,8 @@ class BaseModel(ABC):
         accuracy = getAccuracy(tp, tn, fp, fn)
         fpr = getFalsePositiveRate(fp, tn)
         fnr = getFalseNegativeRate(fn, tp)
+        f1score = getF1Score(tp, fp, fn)
         result = {'precision': precision, 'recall': recall, 'accuracy': accuracy,
-                  'fpr': fpr, 'fnr': fnr}
+                  'fpr': fpr, 'fnr': fnr, 'f1score': f1score}
 
         return result

@@ -9,7 +9,7 @@ from utils.datafilter import load_dataset
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
 # Define Configurações Gerais para todas as simulações
-config = RLConfig(600, 0.0007, 10000, 0, [128, 128])
+config = RLConfig(600, 0.0007, 100000, 0, [128, 128])
 print("Definindo Configuração Padrão: {}".format(config))
 
 resultados_dqn = dict()
@@ -18,6 +18,7 @@ resultados_dqn['recall'] = 0
 resultados_dqn['accuracy'] = 0
 resultados_dqn['fpr'] = 0
 resultados_dqn['fnr'] = 0
+resultados_dqn['f1score'] = 0
 
 resultados_ppo = dict()
 resultados_ppo['precision'] = 0
@@ -25,6 +26,7 @@ resultados_ppo['recall'] = 0
 resultados_ppo['accuracy'] = 0
 resultados_ppo['fpr'] = 0
 resultados_ppo['fnr'] = 0
+resultados_ppo['f1score'] = 0
 
 resultados_a2c = dict()
 resultados_a2c['precision'] = 0
@@ -32,6 +34,7 @@ resultados_a2c['recall'] = 0
 resultados_a2c['accuracy'] = 0
 resultados_a2c['fpr'] = 0
 resultados_a2c['fnr'] = 0
+resultados_a2c['f1score'] = 0
 
 realizacoes = 1
 for i in range(realizacoes):
@@ -44,7 +47,6 @@ for i in range(realizacoes):
     load_dataset(test_size=0.33)
     print()
 
-    '''
     print("Iniciando Treinamento DQN")
     simulacao1 = DQN(1, config=config)
     simulacao1.train()
@@ -56,9 +58,11 @@ for i in range(realizacoes):
     resultados_dqn['accuracy'] += resultados['accuracy']
     resultados_dqn['fpr'] += resultados['fpr']
     resultados_dqn['fnr'] += resultados['fnr']
+    resultados_dqn['f1score'] += resultados['f1score']
     print("Teste DQN Finalizado")
     print()
-    
+
+    '''
     print("Iniciando Treinamento A2C")
     simulacao2 = A2C(2, config=config)
     simulacao2.train()
@@ -72,7 +76,7 @@ for i in range(realizacoes):
     resultados_a2c['fnr'] += resultados['fnr']
     print("Teste A2C Finalizado")
     print()
-    '''
+    
 
     print("Iniciando Treinamento PPO")
     simulacao3 = PPO(3, config=config)
@@ -87,13 +91,15 @@ for i in range(realizacoes):
     resultados_ppo['fnr'] += resultados['fnr']
     print("Teste PPO Finalizado")
     print()
+    '''
 
 print("Resultados DQN")
-print("Precisão: {}".format(resultados_dqn['precision']/realizacoes))
-print("Recall: {}".format(resultados_dqn['recall']/realizacoes))
-print("Acurácia: {}".format(resultados_dqn['accuracy']/realizacoes))
 print("FPR: {}".format(resultados_dqn['fpr']/realizacoes))
 print("FNR: {}".format(resultados_dqn['fnr']/realizacoes))
+print("Precisão: {}".format(resultados_dqn['precision']/realizacoes))
+print("Recall: {}".format(resultados_dqn['recall']/realizacoes))
+print("F1-Score: {}".format(resultados_dqn['f1score']/realizacoes))
+print("Acurácia: {}".format(resultados_dqn['accuracy']/realizacoes))
 print()
 
 print("Resultados A2C")
@@ -102,6 +108,7 @@ print("Recall: {}".format(resultados_a2c['recall']/realizacoes))
 print("Acurácia: {}".format(resultados_a2c['accuracy']/realizacoes))
 print("FPR: {}".format(resultados_a2c['fpr']/realizacoes))
 print("FNR: {}".format(resultados_a2c['fnr']/realizacoes))
+print()
 
 print("Resultados PPO")
 print("Precisão: {}".format(resultados_ppo['precision']/realizacoes))
