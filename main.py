@@ -9,7 +9,7 @@ from utils.datafilter import load_dataset
 os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 
 # Define Configurações Gerais para todas as simulações
-config = RLConfig(600, 0.0007, 100000, 0, 128)
+config = RLConfig(600, 0.0007, 100000, 0, 64)
 print("Definindo Configuração Padrão: {}".format(config))
 
 resultados_dqn = dict()
@@ -36,7 +36,7 @@ resultados_a2c['fpr'] = 0
 resultados_a2c['fnr'] = 0
 resultados_a2c['f1score'] = 0
 
-realizacoes = 10
+realizacoes = 3
 for i in range(realizacoes):
 
     # Iniciando a Simulação
@@ -46,7 +46,6 @@ for i in range(realizacoes):
     print("Carregando base de Dados.")
     load_dataset(test_size=0.33)
     print()
-
 
     print("Iniciando Treinamento DQN")
     simulacao1 = DQN(1, config=config)
@@ -62,7 +61,6 @@ for i in range(realizacoes):
     resultados_dqn['f1score'] += resultados['f1score']
     print("Teste DQN Finalizado")
     print()
-
 
     print("Iniciando Treinamento A2C")
     simulacao2 = A2C(2, config=config)

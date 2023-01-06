@@ -21,7 +21,7 @@ def load_dataset(test_size=0.33):
     # Dividindo os Dados em Treinamento e Teste
     x = df.drop(unselected_features, axis=1)
     y = df['Result']
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=test_size, random_state=42)
+    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=test_size, random_state=42, stratify=y)
 
     # Salvando CSV de Treino e Teste
     filepath = Path('../gym-phishing/gym_phishing/data/trainX.csv')
