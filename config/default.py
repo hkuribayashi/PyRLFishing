@@ -1,6 +1,9 @@
 class RLConfig:
 
     def __init__(self, image_resolution=600, learning_rate=0.0007,  total_timesteps=100000, verbose=2, net_arch=None):
+
+        self._net_arch = dict()
+
         if int(image_resolution) == image_resolution:
             self._image_resolution = image_resolution
         else:
@@ -11,10 +14,25 @@ class RLConfig:
         else:
             self._learning_rate = 0.0007
 
-        if net_arch is None:
-            self._net_arch = [64, 64]
+        if type(net_arch) == int:
+            if net_arch == 64:
+                self._net_arch['DQN'] = [64, 64]
+                self._net_arch['A2C'] = [{'pi': [64, 64], 'vf': [64, 64]}]
+                self._net_arch['PPO'] = [{'pi': [64, 64], 'vf': [64, 64]}]
+            elif net_arch == 128:
+                self._net_arch['DQN'] = [128, 128]
+                self._net_arch['A2C'] = [{'pi': [128, 128], 'vf': [128, 128]}]
+                self._net_arch['PPO'] = [{'pi': [128, 128], 'vf': [128, 128]}]
+            elif net_arch == 256:
+                self._net_arch['DQN'] = [256, 256]
+                self._net_arch['A2C'] = [{'pi': [256, 256], 'vf': [256, 256]}]
+                self._net_arch['PPO'] = [{'pi': [256, 256], 'vf': [256, 256]}]
+            else:
+                raise Exception("Valor de net_arch invalido: {}".format(net_arch))
         else:
-            self._net_arch = net_arch
+            self._net_arch['DQN'] = [64, 64]
+            self._net_arch['A2C'] = [{'pi': [64, 64], 'vf': [64, 64]}]
+            self._net_arch['PPO'] = [{'pi': [64, 64], 'vf': [64, 64]}]
 
         if int(total_timesteps) == total_timesteps:
             self._total_timesteps = total_timesteps

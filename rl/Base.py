@@ -8,6 +8,7 @@ from utils.metrics import getPrecision, getRecall, getAccuracy, getFalsePositive
 class BaseModel(ABC):
     def __init__(self, id_, config=None):
         # Define um ID para a Instância/Simulacao
+        self.model = None
         self._id = id_
 
         if config is None:
@@ -16,7 +17,7 @@ class BaseModel(ABC):
             self.config = config
 
         # Define qual a arquitetura da rede neural interna da DQN
-        self.policy = dict(net_arch=self.config.net_arch)
+        self.policy = dict(net_arch=self.config.net_arch['DQN'])
 
         # Instancia o ambiente Gym Customizado para o Problema
         self.env = gym.make('gym_phishing:RLPTraining-v0')
