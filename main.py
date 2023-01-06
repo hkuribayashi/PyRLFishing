@@ -36,7 +36,7 @@ resultados_a2c['fpr'] = 0
 resultados_a2c['fnr'] = 0
 resultados_a2c['f1score'] = 0
 
-realizacoes = 1
+realizacoes = 10
 for i in range(realizacoes):
 
     # Iniciando a Simulação
@@ -47,7 +47,7 @@ for i in range(realizacoes):
     load_dataset(test_size=0.33)
     print()
 
-    '''
+
     print("Iniciando Treinamento DQN")
     simulacao1 = DQN(1, config=config)
     simulacao1.train()
@@ -62,7 +62,7 @@ for i in range(realizacoes):
     resultados_dqn['f1score'] += resultados['f1score']
     print("Teste DQN Finalizado")
     print()
-    '''
+
 
     print("Iniciando Treinamento A2C")
     simulacao2 = A2C(2, config=config)
