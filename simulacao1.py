@@ -1,7 +1,8 @@
 import os
-from rl.A2C import A2C
+
+import gym
+
 from rl.DQN import DQN
-from rl.PPO import PPO
 from config.default import RLConfig
 from utils.datafilter import load_dataset
 
@@ -20,24 +21,61 @@ config = RLConfig(test_size=test_size, image_resolution=600, learning_rate=0.000
                   folds=folds, net_arch=128)
 print("Definindo Configuração Padrão: {}".format(config))
 
+dqn = DQN(1, config)
+dqn.load_model("models/dqn.zip")
 
-print("Iniciando Execução DQN")
-simulacao1 = DQN(1, config)
-resultados = simulacao1.run()
-print(resultados)
-print("Teste DQN Finalizado")
-print()
+a2c = DQN(2, config)
+a2c.load_model("models/dqn.zip")
 
-print("Iniciando Execução A2C")
-simulacao2 = A2C(2, config)
-resultados = simulacao2.run()
-print(resultados)
-print("Teste A2C Finalizado")
-print()
+ppo = DQN(3, config)
+ppo.load_model("models/dqn.zip")
 
-print("Iniciando Treinamento PPO")
-simulacao3 = PPO(3, config)
-resultados = simulacao3.run()
-print(resultados)
-print("Treinamento PPO Finalizado")
-print()
+tp = 0
+tn = 0
+fp = 0
+fn = 0
+
+for i in range(folds):
+    env = gym.make('gym_phishing:RLPTest-v0', fold=i)
+    obs = env.reset()
+    ppo.model.set_env(env)
+    for _ in range(config.test_size):
+        action, _ = ppo.model.predict(obs, deterministic=True)
+
+        # action igual a 0 (PPO dizendo tá dizendo que é phishing)
+        # Quando a ação for '0' (Phishing)
+        if action == 0:
+            _, _, done, info = env.step2(action)
+            if info['resultado'] == 'TP':
+                tp += 1
+            elif info['resultado'] == 'TN':
+                tn += 1
+            elif info['resultado'] == 'FP':
+                fp += 1
+            elif info['resultado'] == 'FN':
+                fn += 1
+
+        # caso contrário (PPO dizendo tá dizendo que não é phishing)
+        # Então é preciso testar A2C e DQN
+        else:
+            a2c.model.set_env(env)
+            action_a2c, _ = a2c.model.predict(obs, deterministic=True)
+
+            dqn.model.set_env(env)
+            action_dqn, _ = dqn.model.predict(obs, deterministic=True)
+
+            # Se eles concordam
+            if action_dqn == action_a2c:
+                _, _, done, info = env.step2(action_dqn)
+                if info['resultado'] == 'TP':
+                    tp += 1
+                elif info['resultado'] == 'TN':
+                    tn += 1
+                elif info['resultado'] == 'FP':
+                    fp += 1
+                elif info['resultado'] == 'FN':
+                    fn += 1
+
+            # Se eles discordam
+            else:
+                print("Saida")

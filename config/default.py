@@ -1,8 +1,11 @@
 class RLConfig:
 
-    def __init__(self, image_resolution=600, learning_rate=0.0007,  total_timesteps=100000, verbose=2, net_arch=None):
+    def __init__(self, test_size=5, image_resolution=600, learning_rate=0.0007,  total_timesteps=100000, verbose=2,
+                 folds=5, net_arch=None):
 
         self._net_arch = dict()
+
+        self._test_size = test_size
 
         if int(image_resolution) == image_resolution:
             self._image_resolution = image_resolution
@@ -44,9 +47,10 @@ class RLConfig:
         else:
             self._verbose = 2
 
-    def __str__(self):
-        return "RLConfig (image_resolution={}, learning_rate={}, total_timesteps={}, verbose={}, net_arch={})".format(
-            self.image_resolution, self.learning_rate, self.total_timesteps, self.verbose, self.net_arch)
+        if int(folds) == folds:
+            self._folds = folds
+        else:
+            self._folds = 5
 
     @property
     def image_resolution(self):
@@ -67,3 +71,16 @@ class RLConfig:
     @property
     def verbose(self):
         return self._verbose
+
+    @property
+    def folds(self):
+        return self._folds
+
+    @property
+    def test_size(self):
+        return self._test_size
+
+    def __str__(self):
+        return "RLConfig(test_size={}, image_resolution={}, learning_rate={}, total_timesteps={}, verbose={}, " \
+               "folds={}, net_arch={})".format(self.test_size, self.image_resolution, self.learning_rate,
+                                               self.total_timesteps, self.verbose, self.folds, self.net_arch)

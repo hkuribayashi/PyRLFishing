@@ -1,10 +1,11 @@
 import os
 import pandas as pd
+import numpy as np
 from pathlib import Path
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, KFold
 
 
-def load_dataset(test_size=0.33):
+def load_dataset(cv=10):
     # Importanto do Dataset
     # Obtido em https://www.kaggle.com/datasets/akashkr/phishing-website-dataset
 
@@ -21,21 +22,31 @@ def load_dataset(test_size=0.33):
     # Dividindo os Dados em Treinamento e Teste
     x = df.drop(unselected_features, axis=1)
     y = df['Result']
-    x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=test_size, random_state=42, stratify=y)
 
-    # Salvando CSV de Treino e Teste
-    filepath = Path('../gym-phishing/gym_phishing/data/trainX.csv')
-    filepath.parent.mkdir(parents=True, exist_ok=True)
-    x_train.to_csv(filepath, index=False)
+    # Método via k-Fold cross-validation
+    kf = KFold(n_splits=cv, shuffle=True, random_state=None)
 
-    filepath = Path('../gym-phishing/gym_phishing/data/trainY.csv')
-    filepath.parent.mkdir(parents=True, exist_ok=True)
-    y_train.to_csv(filepath, index=False)
+    # Estabelece um contador
+    counter = 0
 
-    filepath = Path('../gym-phishing/gym_phishing/data/testX.csv')
-    filepath.parent.mkdir(parents=True, exist_ok=True)
-    x_test.to_csv(filepath, index=False)
+    path = os.path.join(os.getcwd(), "gym-phishing", "gym_phishing", "data")
+    for train_index, test_index in kf.split(x):
+        x_train, x_test = x.iloc[train_index, :], x.iloc[test_index, :]
+        y_train, y_test = y[train_index], y[test_index]
 
-    filepath = Path('../gym-phishing/gym_phishing/data/testY.csv')
-    filepath.parent.mkdir(parents=True, exist_ok=True)
-    y_test.to_csv(filepath, index=False)
+        # Salvando CSV de Treino e Teste
+        filepath = os.path.join(path, 'trainX{}.csv'.format(counter))
+        x_train.to_csv(filepath, index=False)
+
+        filepath = os.path.join(path, 'trainY{}.csv'.format(counter))
+        y_train.to_csv(filepath, index=False)
+
+        filepath = os.path.join(path, 'testX{}.csv'.format(counter))
+        x_test.to_csv(filepath, index=False)
+
+        filepath = os.path.join(path, 'testY{}.csv'.format(counter))
+        y_test.to_csv(filepath, index=False)
+
+        counter += 1
+
+    return len(y_test.index)
