@@ -8,21 +8,17 @@ import pandas as pd
 
 class RLPTraining(gym.Env):
 
-    def __init__(self):
+    def __init__(self, fold):
         super(RLPTraining, self).__init__()
+        self.fold = fold
         self.current_step = 0
         self.max_errors = 10
         self.errors = 0
-        self.X, self.Y = RLPTraining._load_dataset()
+        self.X = pd.read_csv(os.path.abspath("./gym-phishing/gym_phishing/data/trainX{}.csv".format(self.fold)))
+        self.Y = pd.read_csv(os.path.abspath("./gym-phishing/gym_phishing/data/trainY{}.csv".format(self.fold)))
         self.action_space = spaces.Discrete(2)
         self.observation_space = MultiDiscrete([3, 3, 3, 3, 3, 3, 3, 3, 3])
-        self.reward_range = (-1000000, 1000000)
-
-    @staticmethod
-    def _load_dataset():
-        x = pd.read_csv(os.path.abspath("./gym-phishing/gym_phishing/data/trainX.csv"))
-        y = pd.read_csv(os.path.abspath("./gym-phishing/gym_phishing/data/trainY.csv"))
-        return x, y
+        self.reward_range = (-10000000, 10000000)
 
     def reset(self):
         self.current_step = random.randint(0, len(self.X.loc[:, 'SFH'].values) - 1)
