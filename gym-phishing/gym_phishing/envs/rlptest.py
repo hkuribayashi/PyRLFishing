@@ -5,6 +5,8 @@ from gym import spaces
 from gym.spaces import MultiDiscrete
 import pandas as pd
 
+random.seed(10)
+
 
 class RLPTest(gym.Env):
 
@@ -63,6 +65,7 @@ class RLPTest(gym.Env):
 
     def step2(self, action):
         # Quando a ação for '0', significa -1 (Phishing)
+        global resultado
         if action == 0:
             if self.Y['Result'][self.current_step] == -1:
                 resultado = "TP"

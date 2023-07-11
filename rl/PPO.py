@@ -12,25 +12,32 @@ class PPO(BaseModel):
         # Chama o construtor da Super Classe
         super().__init__(id_, config)
 
+        # Cria um env temporário
+        self.env = gym.make('gym_phishing:RLPTraining-v0', fold=0)
+
+        # Instancia um novo Modelo
+        self.model = PPO_("MlpPolicy",
+                          self.env,
+                          learning_rate=self.config.learning_rate,
+                          verbose=self.config.verbose,
+                          policy_kwargs=dict(optimizer_class=RMSpropTFLike,
+                                             optimizer_kwargs=dict(eps=1e-5),
+                                             net_arch=self.config.net_arch['PPO']))
+
     def run(self):
         resultados = []
         for i in range(self.folds):
             # Instancia o ambiente Gym Customizado para o Problema
             self.env = gym.make('gym_phishing:RLPTraining-v0', fold=i)
 
-            # Instancia um novo Modelo
-            self.model = PPO_("MlpPolicy",
-                              self.env,
-                              learning_rate=self.config.learning_rate,
-                              verbose=self.config.verbose,
-                              policy_kwargs=dict(optimizer_class=RMSpropTFLike,
-                                                 optimizer_kwargs=dict(eps=1e-5),
-                                                 net_arch=self.config.net_arch['PPO']))
+            # Setta o Ambiente
+            self.model.set_env(self.env)
 
             # Realiza o treinamento do Modelo
             self.model.learn(total_timesteps=self.total_timesteps)
 
-            self.save_model("ppo{}".format(i))
+            # Salva o Modelo
+            self.save_model("ppo_{}".format(self._id))
 
             # Armazena os resultados obtidos
             resultados.append(self._test(i))

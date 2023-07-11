@@ -1,5 +1,6 @@
 import numpy as np
 
+
 def getPrecision(tp, fp):
     return tp / (tp + fp)
 
@@ -13,17 +14,17 @@ def getAccuracy(tp, tn, fp, fn):
 
 
 def getFalsePositiveRate(fp, tn):
-    return fp/(fp + tn)
+    return fp / (fp + tn)
 
 
 def getFalseNegativeRate(fn, tp):
-    return fn/(fn+tp)
+    return fn / (fn + tp)
 
 
 def getF1Score(tp, fp, fn):
     precision = getPrecision(tp, fp)
     recall = getRecall(tp, fn)
-    return 2 * (precision*recall/(precision+recall))
+    return 2 * (precision * recall / (precision + recall))
 
 
 def processaResultados(resultados):
@@ -56,5 +57,3 @@ def processaResultados(resultados):
     resultado_final['accuracy_desvio'] = np.std(accuracy)
 
     return resultado_final
-
-

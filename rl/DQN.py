@@ -10,8 +10,15 @@ class DQN(BaseModel):
         # Chama o construtor da Super Classe
         super().__init__(id_, config)
 
+        # Cria um env temporário
+        self.env = gym.make('gym_phishing:RLPTraining-v0', fold=0)
+
         # Instancia o Modelo
-        self.model = None
+        self.model = DQN_("MlpPolicy",
+                          self.env,
+                          policy_kwargs=self.policy,
+                          learning_rate=self.config.learning_rate,
+                          verbose=self.config.verbose)
 
     def run(self):
         resultados = []
@@ -19,18 +26,14 @@ class DQN(BaseModel):
             # Instancia o ambiente Gym Customizado para o Problema
             self.env = gym.make('gym_phishing:RLPTraining-v0', fold=i)
 
-            # Instancia um novo Modelo
-            self.model = DQN_("MlpPolicy",
-                              self.env,
-                              policy_kwargs=self.policy,
-                              learning_rate=self.config.learning_rate,
-                              verbose=self.config.verbose)
+            # Setta o Ambiente
+            self.model.set_env(self.env)
 
             # Realiza o treinamento do Modelo
             self.model.learn(total_timesteps=self.total_timesteps)
 
             # Salva o Modelo
-            self.save_model("dqn{}".format(i))
+            self.save_model("dqn_{}".format(self._id))
 
             # Armazena os resultados obtidos
             resultados.append(self._test(i))
